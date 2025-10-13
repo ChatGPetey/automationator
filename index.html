@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Automationator</title>
+    <!-- PWA Setup for Android/Mobile -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="AutoMate">
+    <meta name="theme-color" content="#151515">
+    <!-- Link to the Web App Manifest (required for installation prompt) -->
+    <!-- NOTE: The 'manifest.webmanifest' file must be created separately and served alongside this HTML file -->
+    <link rel="manifest" href="manifest.webmanifest">
+
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Configure Tailwind to use Inter font and custom colors based on refined gray-green aesthetic -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        // Sophisticated Metallic Palette to match logo
+                        'primary': '#B8860B', // Rich Gold/Bronze matching logo accent
+                        'secondary': '#DAA520', // Lighter gold for hover/highlights
+                        'accent': '#708090', // Slate gray matching logo silver
+                        'text-base': '#FFFFFF', // Pure White for titles
+                        'text-soft': '#E5E5E5', // Light gray for body text
+                        'text-muted': '#B0B0B0', // Muted gray for labels
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom styles for Bentley/Mulliner luxury aesthetic (now gray-green) */
+        body {
+            font-family: 'Inter', sans-serif;
+            /* Clean dark background to match logo */
+            background: #1a1a1a;
+        }
+        .container-card {
+            /* Clean dark card background */
+            background: rgba(45, 45, 45, 0.6);
+            backdrop-filter: blur(4px);
+            border: none; /* Remove border completely */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+            border-radius: 1rem; /* rounded-2xl */
+        }
+        .pain-point-card {
+            background: rgba(35, 35, 35, 0.8); /* Darker internal card background */
+            border-left: 5px solid theme('colors.primary'); 
+            transition: all 0.3s ease;
+            border-radius: 0.75rem; /* rounded-xl */
+        }
+        .pain-point-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7), 0 2px 10px rgba(184, 134, 11, 0.2);
+            background: rgba(45, 45, 45, 0.9);
+            border-left-color: theme('colors.secondary');
+        }
+        .rank-badge {
+            background-color: theme('colors.primary');
+            color: white;
+            min-width: 2.25rem;
+            height: 2.25rem;
+            line-height: 2.25rem;
+            font-size: 1.125rem;
+            border-radius: 0.375rem; /* rounded-md */
+        }
+        /* Style for the "Negative Impact" box */
+        .impact-box {
+            background: rgba(255, 0, 0, 0.08); /* Muted red warning on dark background */
+            border: 1px solid rgba(255, 0, 0, 0.2);
+            color: theme('colors.text-soft');
+            border-radius: 0.5rem; /* rounded-lg */
+        }
+        /* --- CONSOLIDATED INPUT STYLE OVERRIDE --- */
+        /* This single rule forces the style for all states (normal, focus, hover, autofill) to prevent browser overrides. */
+        .input-style,
+        input[type="text"].input-style,
+        textarea.input-style,
+        .input-style:focus,
+        input[type="text"].input-style:focus,
+        textarea.input-style:focus,
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus,
+        textarea:-webkit-autofill,
+        textarea:-webkit-autofill:hover,
+        textarea:-webkit-autofill:focus {
+            background-color: rgba(45, 45, 45, 0.6) !important; /* Dark background */
+            -webkit-box-shadow: 0 0 0px 1000px rgba(45, 45, 45, 0.6) inset !important; /* Autofill background override */
+            border: 1px solid rgba(255, 255, 255, 0.3) !important; /* Consistent border */
+            -webkit-text-fill-color: #E5E5E5 !important; /* Light gray text */
+            color: #E5E5E5 !important; /* Light gray text */
+            outline: none !important; /* No focus outline */
+            box-shadow: none !important; /* No focus shadow */
+            resize: none;
+            transition: background-color 5000s ease-in-out 0s; /* Delay autofill style change */
+        }
+
+        /* Remove any borders or outlines from images */
+        img {
+            border: none !important;
+            outline: none !important;
+            box-shadow: none !important;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-10">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <img src="images/logo.jpg" alt="Automationator Logo" class="w-full max-w-md mx-auto">
+            <p class="mt-4 text-xl text-text-soft">
+                Identify High-Value Automation Needs & Define Product Strategy
+            </p>
+        </header>
+
+        <!-- Input Section -->
+        <div class="p-8 rounded-2xl container-card mb-10">
+            <div class="mb-6">
+                <!-- Removed placeholder -->
+                <label for="solutionTypeInput" class="block text-sm font-semibold text-text-soft mb-2 tracking-widest uppercase">Product or Service</label>
+                <input type="text" id="solutionTypeInput" class="w-full p-3 rounded-lg transition duration-150 input-style">
+            </div>
+            <div class="mb-6">
+                <!-- Removed placeholder -->
+                <label for="personaInput" class="block text-sm font-semibold text-text-soft mb-2 tracking-widest uppercase">Customer</label>
+                <textarea id="personaInput" rows="4" class="w-full p-3 rounded-lg transition duration-150 input-style"></textarea>
+            </div>
+
+            <button id="analyzeButton" class="mt-4 w-full sm:w-auto px-8 py-3 bg-primary text-text-base font-bold rounded-md hover:bg-secondary transition duration-300 focus:outline-none focus:ring-4 focus:ring-secondary disabled:opacity-50 flex items-center justify-center shadow-md hover:shadow-xl tracking-widest uppercase" onclick="analyzePainPoints()">
+                <span id="buttonText">Generate Strategy Report</span>
+                <svg id="loadingSpinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-text-base hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Output Section -->
+        <div id="resultsContainer" class="hidden">
+            <div id="personaDetails" class="p-6 rounded-2xl container-card mb-8 border-l-4 border-secondary shadow-md">
+                <!-- Persona details will be injected here -->
+            </div>
+
+            <h2 class="text-3xl font-bold text-text-base mb-6 border-b-2 border-primary pb-2 tracking-wide">Automation Opportunities & Product Strategy</h2>
+
+            <div id="painPointsList" class="space-y-8">
+                <!-- Automation opportunities will be injected here -->
+            </div>
+        </div>
+
+        <!-- Error/Message Box -->
+        <div id="messageBox" class="hidden fixed bottom-4 right-4 bg-red-900 border-l-4 border-red-500 text-red-200 p-4 rounded-lg shadow-lg" role="alert">
+            <p id="messageText" class="font-semibold"></p>
+        </div>
+    </div>
+
+    <script type="module">
+        // Global Variables for API and Configuration
+        const MODEL_NAME = "gemini-2.5-flash-preview-05-20";
+        const apiKey = "AIzaSyAH6RPXCuTuDtGtGBMDkplVP708uuhBTn0"; // API key is handled by the environment
+
+        // Service worker temporarily removed
+
+        // Function to display messages (instead of alert)
+        const showMessage = (text, isError = true) => {
+            const box = document.getElementById('messageBox');
+            const messageText = document.getElementById('messageText');
+            // Reset classes
+            box.classList.remove('hidden', 'bg-red-900', 'border-red-500', 'text-red-200', 'bg-green-900', 'border-green-500', 'text-green-200');
+
+            if (isError) {
+                box.classList.add('bg-red-900', 'border-red-500', 'text-red-200');
+            } else {
+                box.classList.add('bg-green-900', 'border-green-500', 'text-green-200');
+            }
+
+            messageText.textContent = text;
+            box.classList.remove('hidden');
+
+            setTimeout(() => {
+                box.classList.add('hidden');
+            }, 5000);
+        };
+
+        // LLM System Instruction - DYNAMICALLY GENERATED IN analyzePainPoints()
+        const getSystemPrompt = (solutionType) => {
+            // Updated prompt to focus on inferring the pain points from a high-level description
+            return `You are an expert Productivity and Automation Analyst. Your task is to analyze the high-level persona description provided, infer the top 3 biggest 'time-wasting, soul-destroying' parts of their job that are typically hated by professionals in this field. Rank them by potential for automation (1 being the highest priority), describe the negative emotional/productivity impact, and suggest specific features or offerings for a new ${solutionType} that could fully automate or significantly solve this pain point. Focus on administrative or repetitive tasks that sap motivation.`;
+        };
+
+        // JSON Schema for structured output
+        const responseSchema = {
+            type: "OBJECT",
+            properties: {
+                "personaName": { "type": "STRING", "description": "A concise, professional name for the persona identified (e.g., The Overwhelmed Project Manager)." },
+                "personaSummary": { "type": "STRING", "description": "A brief, two-sentence summary of the persona and their current job challenges." },
+                "automationOpportunities": {
+                    "type": "ARRAY",
+                    "description": "A ranked list of the persona's top automatable job tasks.",
+                    "items": {
+                        "type": "OBJECT",
+                        "properties": {
+                            "rank": { "type": "INTEGER", "description": "The automation priority rank (1 being the most critical and automatable task)." },
+                            "automatableTask": { "type": "STRING", "description": "The specific time-wasting, manual task that could be automated." },
+                            "negativeImpact": { "type": "STRING", "description": "A description of the negative, 'soul-destroying' emotional or productivity impact of this manual task." },
+                            "appOrAgentFeatures": {
+                                "type": "ARRAY",
+                                "description": "Specific features and functions for a new app or agent that would solve this task.",
+                                "items": { "type": "STRING" }
+                            }
+                        },
+                        "propertyOrdering": ["rank", "automatableTask", "negativeImpact", "appOrAgentFeatures"]
+                    }
+                }
+            },
+            "propertyOrdering": ["personaName", "personaSummary", "automationOpportunities"]
+        };
+
+        // Main function to call the Gemini API
+        async function fetchAnalysis(solutionType, personaDescription, retries = 3) {
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKey}`;
+
+            // Generate a tailored system prompt
+            const systemPrompt = getSystemPrompt(solutionType);
+            
+            const payload = {
+                contents: [{ parts: [{ text: `Analyze the following persona and generate a ranked automation opportunity analysis for a ${solutionType}: "${personaDescription}"` }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: {
+                    responseMimeType: "application/json",
+                    responseSchema: responseSchema
+                }
+            };
+
+            for (let attempt = 0; attempt < retries; attempt++) {
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    const jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+                    if (!jsonText) {
+                        throw new Error("Received empty or malformed response from the model.");
+                    }
+
+                    // The model returns the JSON as a string, so we need to parse it
+                    return JSON.parse(jsonText);
+
+                } catch (error) {
+                    console.error(`Attempt ${attempt + 1} failed:`, error);
+                    if (attempt < retries - 1) {
+                        // Exponential backoff
+                        const delay = Math.pow(2, attempt) * 1000;
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                    } else {
+                        throw new Error(`Failed to fetch analysis after ${retries} attempts.`);
+                    }
+                }
+            }
+        }
+
+        // UI rendering functions
+        function renderResults(data) {
+            const personaDetails = document.getElementById('personaDetails');
+            const painPointsList = document.getElementById('painPointsList');
+            const resultsContainer = document.getElementById('resultsContainer');
+
+            // 1. Render Persona Details
+            personaDetails.innerHTML = `
+                <h3 class="text-2xl font-bold text-text-base mb-1 tracking-wide">${data.personaName}</h3>
+                <p class="text-text-soft">${data.personaSummary}</p>
+            `;
+
+            // 2. Render Pain Points List (Automation Opportunities)
+            painPointsList.innerHTML = data.automationOpportunities.map(item => `
+                <div class="pain-point-card p-6 rounded-xl shadow-md border-l-4 border-primary">
+                    <div class="flex items-start mb-4">
+                        <div class="rank-badge bg-primary text-text-base font-extrabold text-center mr-4 shadow-lg flex-shrink-0 flex items-center justify-center">
+                            ${item.rank}
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-text-soft uppercase tracking-wider">Automation Priority Task</p>
+                            <h4 class="text-xl font-semibold text-text-base">${item.automatableTask}</h4>
+                        </div>
+                    </div>
+
+                    <div class="mb-4 p-4 rounded-lg impact-box">
+                        <p class="text-sm font-semibold text-red-400 mb-1">Negative Impact (The Soul-Destroying Part):</p>
+                        <p class="text-sm text-text-soft italic">${item.negativeImpact}</p>
+                    </div>
+
+                    <div class="mt-4">
+                        <p class="text-md font-bold text-secondary mb-2">Suggested Solution Features:</p>
+                        <ul class="list-disc list-inside space-y-2 text-text-soft ml-4">
+                            ${item.appOrAgentFeatures.map(solution => `<li class="text-base">${solution}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+            `).join('');
+
+            resultsContainer.classList.remove('hidden');
+        }
+
+        // Button Click Handler
+        window.analyzePainPoints = async function() {
+            const solutionTypeInput = document.getElementById('solutionTypeInput');
+            const personaInput = document.getElementById('personaInput');
+            const button = document.getElementById('analyzeButton');
+            const buttonText = document.getElementById('buttonText');
+            const spinner = document.getElementById('loadingSpinner');
+            
+            const solutionType = solutionTypeInput.value.trim() || "App or Agent";
+            const personaDescription = personaInput.value.trim();
+
+            if (personaDescription.length < 15) {
+                showMessage("Please provide a detailed description of the customer (min 15 characters).", true);
+                return;
+            }
+
+            // Set loading state
+            button.disabled = true;
+            buttonText.textContent = 'GENERATING...';
+            spinner.classList.remove('hidden');
+            document.getElementById('resultsContainer').classList.add('hidden');
+
+            try {
+                const analysisData = await fetchAnalysis(solutionType, personaDescription);
+                renderResults(analysisData);
+            } catch (error) {
+                console.error("Analysis Error:", error);
+                showMessage(error.message || "An unexpected error occurred during analysis. Please try again.", true);
+            } finally {
+                // Reset state
+                button.disabled = false;
+                buttonText.textContent = 'Generate Strategy Report';
+                spinner.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>

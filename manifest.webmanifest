@@ -1,0 +1,44 @@
+{
+  "name": "Automationator - Automation Strategy Tool",
+  "short_name": "Automationator",
+  "description": "Identify High-Value Automation Needs & Define Product Strategy",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#151515",
+  "theme_color": "#2E4842",
+  "orientation": "portrait-primary",
+  "scope": "./",
+  "categories": ["business", "productivity", "utilities"],
+  "icons": [
+    {
+      "src": "images/logo.jpg",
+      "sizes": "any",
+      "type": "image/jpeg",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "images/logo.jpg", 
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "images/logo.jpg",
+      "sizes": "512x512", 
+      "type": "image/jpeg"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "New Analysis",
+      "short_name": "Analyze",
+      "description": "Start a new automation analysis",
+      "url": "./index.html",
+      "icons": [
+        {
+          "src": "images/logo.jpg",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}
