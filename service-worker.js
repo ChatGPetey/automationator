@@ -1,11 +1,11 @@
 // Service Worker for Automationator PWA
-const CACHE_NAME = 'automationator-v2';
+const CACHE_NAME = 'automationator-v3';
 const urlsToCache = [
   './',
   './index.html',
   './manifest.webmanifest',
-  './images/icon.png',
-  'https://cdn.tailwindcss.com'
+  './images/icon.png'
+  // Don't cache external CDN resources - causes CORS issues
 ];
 
 // Install event - cache resources
