@@ -369,56 +369,73 @@
             }
         }
 
-        function copyReport() {
+        async function copyReport() {
             const resultsContainer = document.getElementById('resultsContainer');
-            if (resultsContainer && !resultsContainer.classList.contains('hidden')) {
-                // Get the text content
-                const textToCopy = resultsContainer.innerText;
-                
-                // Create a temporary textarea for reliable copying on all devices
-                const textArea = document.createElement('textarea');
-                textArea.value = textToCopy;
-                textArea.style.position = 'fixed';
-                textArea.style.top = '0';
-                textArea.style.left = '0';
-                textArea.style.width = '2em';
-                textArea.style.height = '2em';
-                textArea.style.padding = '0';
-                textArea.style.border = 'none';
-                textArea.style.outline = 'none';
-                textArea.style.boxShadow = 'none';
-                textArea.style.background = 'transparent';
-                document.body.appendChild(textArea);
-                textArea.focus();
-                textArea.select();
-                
-                let success = false;
+            if (!resultsContainer || resultsContainer.classList.contains('hidden')) {
+                alert('No report to copy. Please generate a report first.');
+                return;
+            }
+
+            const textToCopy = resultsContainer.innerText;
+
+            // Try Web Share API first (best for mobile)
+            if (navigator.share) {
                 try {
-                    // Try the old method first (most reliable on mobile)
-                    success = document.execCommand('copy');
+                    await navigator.share({
+                        title: 'Automation Strategy Report',
+                        text: textToCopy
+                    });
+                    return; // Success - don't show alert, sharing dialog handled it
                 } catch (err) {
-                    console.error('execCommand failed: ', err);
-                }
-                
-                document.body.removeChild(textArea);
-                
-                if (success) {
-                    alert('Report copied to clipboard!');
-                } else {
-                    // If that failed, try the modern API
-                    if (navigator.clipboard && navigator.clipboard.writeText) {
-                        navigator.clipboard.writeText(textToCopy).then(() => {
-                            alert('Report copied to clipboard!');
-                        }).catch(err => {
-                            console.error('Clipboard API failed: ', err);
-                            alert('Copy failed. Please try long-pressing the report text and selecting "Copy".');
-                        });
+                    if (err.name !== 'AbortError') {
+                        console.error('Share failed:', err);
+                        // Fall through to clipboard methods
                     } else {
-                        alert('Copy failed. Please try long-pressing the report text and selecting "Copy".');
+                        return; // User cancelled share, don't continue
                     }
                 }
+            }
+
+            // Try modern clipboard API
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                try {
+                    await navigator.clipboard.writeText(textToCopy);
+                    alert('Report copied to clipboard!');
+                    return;
+                } catch (err) {
+                    console.error('Clipboard API failed:', err);
+                    // Fall through to textarea method
+                }
+            }
+
+            // Fallback: textarea method
+            const textArea = document.createElement('textarea');
+            textArea.value = textToCopy;
+            textArea.style.position = 'fixed';
+            textArea.style.top = '0';
+            textArea.style.left = '0';
+            textArea.style.width = '100%';
+            textArea.style.height = '100px';
+            textArea.style.fontSize = '16px'; // Prevent zoom on iOS
+            document.body.appendChild(textArea);
+            
+            textArea.focus();
+            textArea.select();
+            textArea.setSelectionRange(0, 99999); // For mobile devices
+
+            let success = false;
+            try {
+                success = document.execCommand('copy');
+            } catch (err) {
+                console.error('execCommand failed:', err);
+            }
+
+            document.body.removeChild(textArea);
+
+            if (success) {
+                alert('Report copied to clipboard!');
             } else {
-                alert('No report to copy. Please generate a report first.');
+                alert('Unable to copy automatically. Please long-press the report text to select and copy it manually.');
             }
         }
 
