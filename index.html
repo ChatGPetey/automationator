@@ -167,9 +167,14 @@
                 <!-- Automation opportunities will be injected here -->
             </div>
 
-            <button id="copyButton" class="mt-4 w-full sm:w-auto px-8 py-3 bg-secondary text-text-base font-bold rounded-md hover:bg-primary transition duration-300 focus:outline-none focus:ring-4 focus:ring-primary flex items-center justify-center shadow-md hover:shadow-xl tracking-widest uppercase" onclick="copyReport()">
-                Copy Report
-            </button>
+            <div class="flex gap-4 mt-4">
+                <button id="copyButton" class="flex-1 sm:flex-none px-8 py-3 bg-secondary text-text-base font-bold rounded-md hover:bg-primary transition duration-300 focus:outline-none focus:ring-4 focus:ring-primary flex items-center justify-center shadow-md hover:shadow-xl tracking-widest uppercase" onclick="copyReport()">
+                    Copy Report
+                </button>
+                <button id="selectButton" class="flex-1 sm:flex-none px-8 py-3 bg-accent text-text-base font-bold rounded-md hover:bg-secondary transition duration-300 focus:outline-none focus:ring-4 focus:ring-secondary flex items-center justify-center shadow-md hover:shadow-xl tracking-widest uppercase" onclick="selectReport()">
+                    Select All
+                </button>
+            </div>
         </div>
 
         <!-- Error/Message Box -->
@@ -446,6 +451,23 @@
             } else {
                 alert('Unable to copy automatically. Please long-press the report text to select and copy it manually.');
             }
+        }
+
+        function selectReport() {
+            const resultsContainer = document.getElementById('resultsContainer');
+            if (!resultsContainer || resultsContainer.classList.contains('hidden')) {
+                alert('No report to select. Please generate a report first.');
+                return;
+            }
+            
+            // Select all text in the results container
+            const range = document.createRange();
+            range.selectNodeContents(resultsContainer);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            
+            alert('Report text selected! Now tap Copy from the menu, or use Ctrl+C');
         }
 
         // Register Service Worker for PWA
