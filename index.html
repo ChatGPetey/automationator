@@ -376,15 +376,28 @@
 
         function copyReport() {
             const resultsContainer = document.getElementById('resultsContainer');
-            if (resultsContainer) {
-                const textToCopy = resultsContainer.innerText;
-                navigator.clipboard.writeText(textToCopy).then(() => {
-                    alert('Report copied to clipboard!');
-                }).catch(err => {
-                    console.error('Failed to copy text: ', err);
-                    alert('Copy failed. Please try selecting and copying the text manually.');
-                });
+            if (!resultsContainer || resultsContainer.classList.contains('hidden')) {
+                alert('No report to copy. Please generate a report first.');
+                return;
             }
+            
+            const textToCopy = resultsContainer.innerText;
+            
+            // Check if clipboard API is available
+            if (!navigator.clipboard || !navigator.clipboard.writeText) {
+                alert('Clipboard API not available. Please copy manually.');
+                return;
+            }
+            
+            // Simple, direct clipboard write - must be synchronous with user click
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    alert('✓ Report copied to clipboard!');
+                })
+                .catch(err => {
+                    console.error('Copy failed:', err);
+                    alert('Copy failed. Please try selecting the text manually.');
+                });
         }
 
         function selectReport() {
