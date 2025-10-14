@@ -375,81 +375,15 @@
         }
 
         function copyReport() {
-            console.log('Copy button clicked!'); // Debug log
-            
             const resultsContainer = document.getElementById('resultsContainer');
-            if (!resultsContainer || resultsContainer.classList.contains('hidden')) {
-                alert('No report to copy. Please generate a report first.');
-                return;
-            }
-
-            const textToCopy = resultsContainer.innerText;
-            console.log('Text to copy length:', textToCopy.length); // Debug log
-
-            // Try Web Share API first (best for mobile)
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Automation Strategy Report',
-                    text: textToCopy
-                }).then(() => {
-                    console.log('Share successful');
-                }).catch((err) => {
-                    if (err.name !== 'AbortError') {
-                        console.error('Share failed:', err);
-                        fallbackCopy(textToCopy);
-                    }
-                });
-                return;
-            }
-
-            // If no share API, use fallback immediately
-            fallbackCopy(textToCopy);
-        }
-
-        function fallbackCopy(textToCopy) {
-            // Try modern clipboard API
-            if (navigator.clipboard && navigator.clipboard.writeText) {
+            if (resultsContainer) {
+                const textToCopy = resultsContainer.innerText;
                 navigator.clipboard.writeText(textToCopy).then(() => {
                     alert('Report copied to clipboard!');
-                }).catch((err) => {
-                    console.error('Clipboard API failed:', err);
-                    textareaCopy(textToCopy);
+                }).catch(err => {
+                    console.error('Failed to copy text: ', err);
+                    alert('Copy failed. Please try selecting and copying the text manually.');
                 });
-                return;
-            }
-
-            // Use textarea method
-            textareaCopy(textToCopy);
-        }
-
-        function textareaCopy(textToCopy) {
-            const textArea = document.createElement('textarea');
-            textArea.value = textToCopy;
-            textArea.style.position = 'fixed';
-            textArea.style.top = '0';
-            textArea.style.left = '0';
-            textArea.style.width = '100%';
-            textArea.style.height = '100px';
-            textArea.style.fontSize = '16px';
-            document.body.appendChild(textArea);
-            
-            textArea.focus();
-            textArea.select();
-            textArea.setSelectionRange(0, 99999);
-
-            let success = false;
-            try {
-                success = document.execCommand('copy');
-            } catch (err) {
-                console.error('execCommand failed:', err);
-            }
-
-            document.body.removeChild(textArea);
-
-            if (success) {
-                alert('Report copied to clipboard!');
-            } else {
-                alert('Unable to copy automatically. Please long-press the report text to select and copy it manually.');
             }
         }
 
@@ -460,14 +394,13 @@
                 return;
             }
             
-            // Select all text in the results container
             const range = document.createRange();
             range.selectNodeContents(resultsContainer);
             const selection = window.getSelection();
             selection.removeAllRanges();
             selection.addRange(range);
             
-            alert('Report text selected! Now tap Copy from the menu, or use Ctrl+C');
+            alert('Report text selected! Now you can copy it with Ctrl+C or your device menu.');
         }
 
         // Register Service Worker for PWA
