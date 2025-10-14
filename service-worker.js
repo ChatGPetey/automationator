@@ -1,5 +1,5 @@
 // Service Worker for Automationator PWA
-const CACHE_NAME = 'automationator-v1';
+const CACHE_NAME = 'automationator-v2';
 const urlsToCache = [
   './',
   './index.html',
