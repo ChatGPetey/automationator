@@ -369,7 +369,9 @@
             }
         }
 
-        async function copyReport() {
+        function copyReport() {
+            console.log('Copy button clicked!'); // Debug log
+            
             const resultsContainer = document.getElementById('resultsContainer');
             if (!resultsContainer || resultsContainer.classList.contains('hidden')) {
                 alert('No report to copy. Please generate a report first.');
@@ -377,38 +379,45 @@
             }
 
             const textToCopy = resultsContainer.innerText;
+            console.log('Text to copy length:', textToCopy.length); // Debug log
 
             // Try Web Share API first (best for mobile)
             if (navigator.share) {
-                try {
-                    await navigator.share({
-                        title: 'Automation Strategy Report',
-                        text: textToCopy
-                    });
-                    return; // Success - don't show alert, sharing dialog handled it
-                } catch (err) {
+                navigator.share({
+                    title: 'Automation Strategy Report',
+                    text: textToCopy
+                }).then(() => {
+                    console.log('Share successful');
+                }).catch((err) => {
                     if (err.name !== 'AbortError') {
                         console.error('Share failed:', err);
-                        // Fall through to clipboard methods
-                    } else {
-                        return; // User cancelled share, don't continue
+                        fallbackCopy(textToCopy);
                     }
-                }
+                });
+                return;
             }
 
+            // If no share API, use fallback immediately
+            fallbackCopy(textToCopy);
+        }
+
+        function fallbackCopy(textToCopy) {
             // Try modern clipboard API
             if (navigator.clipboard && navigator.clipboard.writeText) {
-                try {
-                    await navigator.clipboard.writeText(textToCopy);
+                navigator.clipboard.writeText(textToCopy).then(() => {
                     alert('Report copied to clipboard!');
-                    return;
-                } catch (err) {
+                }).catch((err) => {
                     console.error('Clipboard API failed:', err);
-                    // Fall through to textarea method
-                }
+                    textareaCopy(textToCopy);
+                });
+                return;
             }
 
-            // Fallback: textarea method
+            // Use textarea method
+            textareaCopy(textToCopy);
+        }
+
+        function textareaCopy(textToCopy) {
             const textArea = document.createElement('textarea');
             textArea.value = textToCopy;
             textArea.style.position = 'fixed';
@@ -416,12 +425,12 @@
             textArea.style.left = '0';
             textArea.style.width = '100%';
             textArea.style.height = '100px';
-            textArea.style.fontSize = '16px'; // Prevent zoom on iOS
+            textArea.style.fontSize = '16px';
             document.body.appendChild(textArea);
             
             textArea.focus();
             textArea.select();
-            textArea.setSelectionRange(0, 99999); // For mobile devices
+            textArea.setSelectionRange(0, 99999);
 
             let success = false;
             try {
