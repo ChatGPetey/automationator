@@ -374,12 +374,32 @@
 
         function copyReport() {
             const resultsContainer = document.getElementById('resultsContainer');
+            
+            if (!resultsContainer) {
+                alert('Error: Results container not found');
+                return;
+            }
+            
             const textToCopy = resultsContainer.innerText;
-            navigator.clipboard.writeText(textToCopy).then(() => {
-                alert('Report copied!');
-            }).catch(err => {
-                alert('Copy failed: ' + err);
-            });
+            
+            if (!textToCopy || textToCopy.trim().length === 0) {
+                alert('Error: No text to copy');
+                return;
+            }
+            
+            if (!navigator.clipboard) {
+                alert('Error: Clipboard API not available. Are you on HTTPS?');
+                return;
+            }
+            
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => {
+                    alert('✓ Report copied to clipboard!');
+                })
+                .catch(err => {
+                    alert('Copy failed: ' + err.message);
+                    console.error('Clipboard error:', err);
+                });
         }
 
         // Register Service Worker for PWA
