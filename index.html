@@ -402,14 +402,24 @@
                 });
         }
 
-        // Unregister Service Worker to clear cache
+        // Aggressively unregister Service Worker and clear ALL caches
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistrations().then(function(registrations) {
                 for(let registration of registrations) {
                     registration.unregister();
-                    console.log('Service Worker unregistered');
                 }
             });
+            
+            // Delete all caches
+            if ('caches' in window) {
+                caches.keys().then(function(names) {
+                    for (let name of names) {
+                        caches.delete(name);
+                    }
+                });
+            }
+            
+            alert('Cache cleared! Please refresh this page once more.');
         }
     </script>
 </body>
