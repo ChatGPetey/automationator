@@ -369,32 +369,62 @@
             }
         }
 
+        function showToast(message, isSuccess = true) {
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-4 right-4 px-6 py-4 rounded-lg shadow-xl transform transition-all duration-300 ease-in-out z-50 ${
+                isSuccess ? 'bg-green-800 border-l-4 border-green-400' : 'bg-red-800 border-l-4 border-red-400'
+            }`;
+            toast.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <span class="text-2xl">${isSuccess ? '✓' : '✕'}</span>
+                    <span class="text-text-soft font-semibold">${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Animate in
+            setTimeout(() => {
+                toast.style.opacity = '1';
+                toast.style.transform = 'translateY(0)';
+            }, 10);
+            
+            // Animate out and remove
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 3000);
+        }
+
         function copyReport() {
             const resultsContainer = document.getElementById('resultsContainer');
             
             if (!resultsContainer) {
-                alert('Error: Results container not found');
+                showToast('Results container not found', false);
                 return;
             }
             
             const textToCopy = resultsContainer.innerText;
             
             if (!textToCopy || textToCopy.trim().length === 0) {
-                alert('Error: No text to copy');
+                showToast('No text to copy', false);
                 return;
             }
             
             if (!navigator.clipboard) {
-                alert('Error: Clipboard API not available. Are you on HTTPS?');
+                showToast('Clipboard not available', false);
                 return;
             }
             
             navigator.clipboard.writeText(textToCopy)
                 .then(() => {
-                    alert('✓ Report copied to clipboard!');
+                    showToast('Report copied to clipboard!', true);
                 })
                 .catch(err => {
-                    alert('Copy failed: ' + err.message);
+                    showToast('Copy failed: ' + err.message, false);
                     console.error('Clipboard error:', err);
                 });
         }
